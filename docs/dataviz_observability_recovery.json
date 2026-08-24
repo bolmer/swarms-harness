@@ -16,8 +16,8 @@
           "role": "programmer",
           "route": "glm52",
           "model": "GLM 5.2 High",
-          "task": "Aceptar o corregir el contrato read-only ya generado en scripts/run_observability.py, tests/test_run_observability.py y docs/SWARM_UI_CONTRACT.md. Inspecciona los artefactos existentes antes de editar. Debe derivar run, etapas, tareas, agente propietario y subagentes desde checkpoints, sanitizar rutas/errores, soportar runs vacíos/parciales y no reclamar jobs ni iniciar workers. Ejecuta la suite dirigida con --basetemp .cache/pytest-observability-recovery y Ruff dirigido. No cambies workflow_runtime.py ni el coordinador Rust.",
-          "artifacts": ["scripts/run_observability.py", "tests/test_run_observability.py", "docs/SWARM_UI_CONTRACT.md"],
+          "task": "Aceptar o corregir el contrato read-only ya generado en scripts/run_observability.py, tests/test_run_observability.py y docs/STATE_CONTRACT.md. Inspecciona los artefactos existentes antes de editar. Debe derivar run, etapas, tareas, agente propietario y subagentes desde checkpoints, sanitizar rutas/errores, soportar runs vacíos/parciales y no reclamar jobs ni iniciar workers. Ejecuta la suite dirigida con --basetemp .cache/pytest-observability-recovery y Ruff dirigido. No cambies workflow_runtime.py ni el coordinador Rust.",
+          "artifacts": ["scripts/run_observability.py", "tests/test_run_observability.py", "docs/STATE_CONTRACT.md"],
           "tools_policy": "full",
           "needs": [],
           "verify": [
