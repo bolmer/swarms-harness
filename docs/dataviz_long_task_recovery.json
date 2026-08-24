@@ -84,7 +84,7 @@
           "artifacts": [
             "scripts/run_observability.py",
             "tests/test_run_observability.py",
-            "docs/SWARM_UI_CONTRACT.md"
+            "docs/STATE_CONTRACT.md"
           ],
           "tools_policy": "full",
           "needs": [
@@ -93,43 +93,6 @@
           "verify": [
             "uv run pytest -q tests/test_run_observability.py",
             "uv run ruff check scripts/run_observability.py tests/test_run_observability.py"
-          ]
-        },
-        {
-          "id": "operator_ui",
-          "role": "programmer",
-          "route": "glm52",
-          "model": "GLM 5.2 High",
-          "task": "Crear un spike de UI nativa Rust y read-only como segundo binario feature-gated, comenzando con egui/eframe y sin afectar dependencias del coordinador cuando la feature esté apagada. Debe mostrar jerarquía tarea→agente→subagentes, modelo, etapa, estado y heartbeat; el detalle aparece dentro de la misma ventana y nunca inicia ventanas o procesos en primer plano. Incluir estados vacío/cargando/error/stale, navegación por teclado, contraste AA, repaint bajo demanda y listas virtualizadas. Medir CPU/RAM/startup/tamaño antes de fijar el toolkit.",
-          "artifacts": [
-            "rust/src/ui_main.rs",
-            "rust/tests/ui_state.rs",
-            "docs/SWARM_UI.md"
-          ],
-          "tools_policy": "full",
-          "needs": [
-            "observable_run_contract"
-          ],
-          "verify": [
-            "cargo test --manifest-path rust/Cargo.toml --features ui-egui",
-            "cargo clippy --manifest-path rust/Cargo.toml --features ui-egui --all-targets -- -D warnings"
-          ]
-        },
-        {
-          "id": "operator_ui_review",
-          "role": "verifier",
-          "route": "gemini_flash",
-          "model": "Gemini 3.5 Flash",
-          "task": "Revisar la UI local en desktop, tablet y móvil. Verificar árbol profundo, nombres largos, estados stale/error/empty, teclado, foco visible, reduced motion y que ninguna acción abra o enfoque procesos externos. Registrar brechas sin ampliar el alcance a edición del workflow.",
-          "artifacts": [
-            "docs/SWARM_UI_REVIEW.md"
-          ],
-          "tools_policy": "full",
-          "needs": [
-            "operator_ui"
-          ],
-          "verify": [
-            "cargo test --manifest-path rust/Cargo.toml --features ui-egui"
           ]
         }
       ]

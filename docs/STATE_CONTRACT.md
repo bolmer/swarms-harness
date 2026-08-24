@@ -1,8 +1,8 @@
 # Run state and control contract v1
 
-The local UI observes a SWARMS run and may append explicit user steer prompts;
-it never writes coordinator snapshots, claims tasks, launches workers or mutates
-plans. Python and Rust publish the same observed files under `.agent/swarm/runs/<run_id>/`:
+SWARMS exposes a filesystem contract for run-state consumers and explicit steering
+producers. Consumers must not write coordinator snapshots, claim tasks, launch workers
+or mutate plans. Python and Rust publish the same observed files under `.agent/swarm/runs/<run_id>/`:
 
 - `workflow.json`: run identity, project, runtime, workspace, limits and heartbeat interval.
 - `tasks/*.json`: current task/agent snapshot, written atomically.
@@ -51,9 +51,8 @@ Consumers may rely on these fields:
 
 `agent_id` is the stable plan identity. `parent_task_id` is optional and
 references another task's `source_id`; `null` means a root agent. `subagents`
-lists direct child `agent_id` values. These fields describe UI nesting only.
-`needs` remains the execution DAG and must not be inferred from the visual
-hierarchy.
+lists direct child `agent_id` values. These fields describe agent hierarchy only.
+`needs` remains the execution DAG and must not be inferred from that hierarchy.
 
 `subagents` contains only children declared in the SWARMS plan. It must never
 be populated by guessing what happens inside Codex, GLM, Gemini or another
@@ -63,9 +62,9 @@ fan-out but hides identifiers, and `reported` only when machine-readable logs
 provide explicit child IDs. In the latter case, adapters may append those IDs
 to `provider_subagents`; the two child lists remain separate.
 
-The UI should treat a running task as stale when `last_progress_unix_ms` is
-older than `workflow.json.heartbeat_interval_seconds`; it falls back to the
-coordinator heartbeat for historical runs. `stale` is visual only and never
+Observers may treat a running task as stale when `last_progress_unix_ms` is
+older than `workflow.json.heartbeat_interval_seconds`; they may fall back to the
+coordinator heartbeat for historical runs. `stale` is observational only and never
 cancels or changes the task status. Unknown fields must be ignored for forward
 compatibility.
 
@@ -79,9 +78,8 @@ Each line in `events.jsonl` is independent JSON with `event`,
 such as the ISO timestamp, model, provider, error or return code.
 
 Readers should tail complete newline-terminated records and retry a snapshot
-read if an atomic replacement races with the filesystem watcher. Opening task
-details or child-agent panels belongs entirely to the UI process; it must not
-signal or foreground worker processes.
+read if an atomic replacement races with the filesystem watcher. Reading task
+details or child-agent metadata must not signal or foreground worker processes.
 
 ## Steering mailbox
 
@@ -92,11 +90,9 @@ delivered instruction becomes a subsequent provider turn, never stdin
 injection into the current CLI process. Unsupported or missing sessions are
 recorded as `rejected` without falsifying delivery.
 
-The intended observer is a separate, feature-gated native Rust binary so the
-coordinator remains lightweight when no UI is requested. This contract does
-not require Node, a browser, WebView, HTTP server, UI framework, or new runtime
-dependency; those choices stay outside the coordinator until the frontend
-brief is approved.
+This contract is frontend-agnostic. It does not require Node, a browser, WebView,
+HTTP server, UI framework, or any additional runtime dependency. External tools may
+consume it without becoming part of the coordinator.
 
 ## Resume semantics
 
